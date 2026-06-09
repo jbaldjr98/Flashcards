@@ -1,4 +1,4 @@
-﻿namespace Model
+﻿namespace Flashcards.Model
 {
     public class Flashcard
     {

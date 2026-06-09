@@ -1,6 +1,6 @@
 ﻿namespace DomainInterface
 {
-    public class Class1
+    public class ISubjectRepository
     {
 
     }
