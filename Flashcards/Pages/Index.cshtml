@@ -4,7 +4,46 @@
     ViewData["Title"] = "FlashCards";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mb-5">
+    <h1 class="display-4 text-light">Welcome to Flashcards!!</h1>
+    <p class="text-light fs-5">Manage your study decks</p>
 </div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    <!-- Create a new Deck -->
+    <div class="col">
+        <div class="card card-action h-100 shadow-sm">
+            <div class="card-body d-flex flex-column align-items-center text-center">
+                <img src="/Icons/plus-.svg" class="card-icon mb-3" alt="Create Icon">
+                <h5 class="card-title">Create a new Deck</h5>
+                <p class="card-text text-muted flex-grow-1">Start building your study collection by creating a new flashcard deck.</p>
+                <button class="btn btn-primary mt-auto" onclick="location.href='#'">Create Deck</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update a Deck -->
+    <div class="col">
+        <div class="card card-action h-100 shadow-sm">
+            <div class="card-body d-flex flex-column align-items-center text-center">
+                <img src="/Icons/pencil-square.svg" class="card-icon mb-3" alt="Update Icon">
+                <h5 class="card-title">Update a Deck</h5>
+                <p class="card-text text-muted flex-grow-1">Modify existing decks by editing cards or updating deck details.</p>
+                <button class="btn btn-warning mt-auto" onclick="location.href='#'">Update Deck</button>
+            </div>
+        </div>
+
+    <!-- Delete a Deck -->
+    <div class="col">
+        <div class="card card-action h-100 shadow-sm">
+            <div class="card-body d-flex flex-column align-items-center text-center">
+                <img src="/Icons/trash.svg" class="card-icon mb-3" alt="Delete Icon">
+                <h5 class="card-title">Delete a Deck</h5>
+                <p class="card-text text-muted flex-grow-1">Remove decks you no longer need from your collection.</p>
+                <button class="btn btn-danger mt-auto" onclick="location.href='#'">Delete Deck</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
