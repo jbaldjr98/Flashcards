@@ -7,8 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Contollers\" />
-    <Folder Include="Models\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
@@ -23,12 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Database\Database.sqlproj" />
-    <ProjectReference Include="..\DomainInterface\DomainInterface.csproj" />
-    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\DomainInterface\DataInterface.csproj" />
+    <ProjectReference Include="..\Domain\Data.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
-    <ProjectReference Include="..\ServiceInterface\ServiceInterface.csproj" />
-    <ProjectReference Include="..\Service\Service.csproj" />
+    <ProjectReference Include="..\ServiceInterface\DomainInterface.csproj" />
+    <ProjectReference Include="..\Service\Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DomainInterface\DomainInterface.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
   </ItemGroup>
 

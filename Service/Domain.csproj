@@ -12,7 +12,14 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.16">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DomainInterface\DataInterface.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="..\ServiceInterface\DomainInterface.csproj" />
   </ItemGroup>
 
 </Project>

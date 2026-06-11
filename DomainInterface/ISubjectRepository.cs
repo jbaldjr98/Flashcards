@@ -1,7 +1,10 @@
-﻿namespace DomainInterface
+﻿using Flashcards.Model;
+
+namespace DataInterface
 {
-    public class ISubjectRepository
+    public interface ISubjectRepository : IGenericRepository<Subject>
     {
+        public Task<Subject> GetSubjectByName(string name);
 
     }
 }

@@ -1,4 +1,4 @@
-﻿using DomainInterface;
+﻿using DataInterface;
 using Flashcards.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain
+namespace Data
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
@@ -20,12 +20,17 @@ namespace Domain
         }
         public Task AddAsync(T entity)
         {
-            return table.AddAsync(entity).AsTask();
+            var newEntity = table.AddAsync(entity).AsTask();
+            _context.SaveChanges();
+            return newEntity;
+
         }
 
         public void DeleteAsync(T entity)
         {
             table.Remove(entity);
+            _context.SaveChanges();
+
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
@@ -41,6 +46,8 @@ namespace Domain
         public void UpdateAsync(T entity)
         {
             table.Update(entity);
+            _context.SaveChanges();
+
         }
     }
 }

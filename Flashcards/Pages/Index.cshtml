@@ -9,12 +9,12 @@
     <p class="text-light fs-5">Manage your study decks</p>
 </div>
 
-<div class="row row-cols-1 row-cols-md-3 g-4">
+<div class="row row-cols-1 row-cols-md-4 g-4">
     <!-- Create a new Deck -->
     <div class="col">
         <div class="card card-action h-100 shadow-sm">
             <div class="card-body d-flex flex-column align-items-center text-center">
-                <img src="/Icons/plus-.svg" class="card-icon mb-3" alt="Create Icon">
+                <img src="/Icons/plus-square.svg" class="card-icon mb-3" alt="Create Icon">
                 <h5 class="card-title">Create a new Deck</h5>
                 <p class="card-text text-muted flex-grow-1">Start building your study collection by creating a new flashcard deck.</p>
                 <button class="btn btn-primary mt-auto" onclick="location.href='#'">Create Deck</button>
@@ -32,6 +32,7 @@
                 <button class="btn btn-warning mt-auto" onclick="location.href='#'">Update Deck</button>
             </div>
         </div>
+    </div>
 
     <!-- Delete a Deck -->
     <div class="col">
@@ -41,6 +42,17 @@
                 <h5 class="card-title">Delete a Deck</h5>
                 <p class="card-text text-muted flex-grow-1">Remove decks you no longer need from your collection.</p>
                 <button class="btn btn-danger mt-auto" onclick="location.href='#'">Delete Deck</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card card-action h-100 shadow-sm">
+            <div class="card-body d-flex flex-column align-items-center text-center">
+                <img src="/Icons/book.svg" class="card-icon mb-3" alt="StudyIcon">
+                <h5 class="card-title">Study a Deck</h5>
+                <p class="card-text text-muted flex-grow-1">Study the decks you've created.</p>
+                <button class="btn btn-primary mt-auto" onclick="location.href='#'">Study Deck</button>
             </div>
         </div>
     </div>
