@@ -18,12 +18,10 @@ namespace Data
             _context = context;
             table = _context.Set<T>();
         }
-        public Task AddAsync(T entity)
+        public async Task AddAsync(T entity)
         {
-            var newEntity = table.AddAsync(entity).AsTask();
-            _context.SaveChanges();
-            return newEntity;
-
+            var newEntity = await table.AddAsync(entity).AsTask();
+            await _context.SaveChangesAsync();
         }
 
         public void DeleteAsync(T entity)
@@ -43,10 +41,11 @@ namespace Data
             return await table.FindAsync(id);
         }
 
-        public void UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
             table.Update(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+            return entity;
 
         }
     }

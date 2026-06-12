@@ -21,32 +21,30 @@ namespace Flashcards.Model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Subject>().ToTable("Subject","dbo");
-            modelBuilder.Entity<Flashcard>().ToTable("Flashcard","dbo");
-            modelBuilder.Entity<Chapter>().ToTable("Chapter","dbo");
-
             modelBuilder.Entity<Subject>()
                 .HasKey(s => s.id);
 
             modelBuilder.Entity<Chapter>()
                 .HasKey(c => c.id);
 
-
             modelBuilder.Entity<Chapter>()
-                .HasKey(c => c.subjectId)
-                .HasName("FK_Chapter_ToSubject");
-            
+                .HasOne(c => c.Subject)
+                .WithMany(s => s.Chapters)
+                .HasForeignKey(c => c.subjectId);
+
             modelBuilder.Entity<Flashcard>()
                 .HasKey(f => f.id);
 
             modelBuilder.Entity<Flashcard>()
-                .HasKey(f => f.chapterId)
-                .HasName("FK_Flashcard_ToChapter");
+                .HasOne(f => f.chapter)
+                .WithMany(c => c.Flashcards)
+                .HasForeignKey(f => f.chapterId);
 
             modelBuilder.Entity<Flashcard>()
-                .HasKey(f => f.subjectId)
-                .HasName("FK_Flashcard_ToSubject");
-                
-        }   
+                .HasOne(f => f.subject)
+                .WithMany(s => s.Flashcards)
+                .HasForeignKey(f => f.subjectId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }

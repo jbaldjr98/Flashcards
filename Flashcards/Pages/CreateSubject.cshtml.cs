@@ -26,7 +26,7 @@ namespace Web.Pages
             {
                 return Page();
             }
-            await _subjectService.AddAsync(NewSubject);
+            await _subjectService.CreateNewSubject(NewSubject);
             
             return Page();
 

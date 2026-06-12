@@ -3,8 +3,8 @@ using DomainInterface;
 using Flashcards.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace Domain
@@ -19,7 +19,7 @@ namespace Domain
 
         public async Task CreateNewSubject(Subject newSubject)
         {
-            var isUniqueName = _subjectRepository.GetSubjectByName(newSubject.Name);
+            var isUniqueName = await _subjectRepository.GetSubjectByName(newSubject.Name);
             if (isUniqueName == null)
             {
                 await _subjectRepository.AddAsync(newSubject);

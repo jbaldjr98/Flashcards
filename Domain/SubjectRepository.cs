@@ -1,6 +1,6 @@
 ﻿using DataInterface;
 using Flashcards.Model;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Data
 {

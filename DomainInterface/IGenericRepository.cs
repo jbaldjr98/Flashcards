@@ -11,7 +11,7 @@ namespace DataInterface
             public Task<T> GetByIdAsync(int id);
             public Task<IEnumerable<T>> GetAllAsync();
             public Task AddAsync(T entity);
-            public void UpdateAsync(T entity);
+            public Task<T> UpdateAsync(T entity);
             public void DeleteAsync(T entity);
     }
 }
