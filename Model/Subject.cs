@@ -14,7 +14,7 @@ namespace Flashcards.Model
         [Required]
         public string Name { get; set; }
         public string Description { get; set; }
-        public ICollection<Flashcard>  Flashcards { get; set; }
-        public ICollection<Chapter> Chapters { get; set; }
+        public ICollection<Flashcard> Flashcards { get; set; } = new List<Flashcard>();
+        public ICollection<Chapter> Chapters { get; set; } = new List<Chapter>();
     }
 }

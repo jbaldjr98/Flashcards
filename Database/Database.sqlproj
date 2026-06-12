@@ -58,8 +58,8 @@
     <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Subject.sql" />
-    <Build Include="Chapter.sql" />
-    <Build Include="Flashcard.sql" />
+    <Build Include="Subjects.sql" />
+    <Build Include="Chapters.sql" />
+    <Build Include="Flashcards.sql" />
   </ItemGroup>
 </Project>
