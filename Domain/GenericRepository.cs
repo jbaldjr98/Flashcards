@@ -18,9 +18,16 @@ namespace Data
             _context = context;
             table = _context.Set<T>();
         }
-        public async Task AddAsync(T entity)
+        public async Task<T> AddAsync(T entity)
         {
-            var newEntity = await table.AddAsync(entity).AsTask();
+            await table.AddAsync(entity).AsTask();
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async Task AddRangeAsync(List<T> entities)
+        {
+            await table.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
         }
 

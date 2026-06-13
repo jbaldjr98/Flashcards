@@ -9,6 +9,6 @@ namespace DomainInterface
 {
     public interface ISubjectService : IGenericService<Subject> 
     {
-        Task CreateNewSubject(Subject newSubject);
+        Task<Subject> CreateNewSubject(Subject newSubject);
     }
 }

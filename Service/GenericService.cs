@@ -14,6 +14,8 @@ namespace Domain
 
         public Task AddAsync(T entity) => _repository.AddAsync(entity);
 
+        public Task AddRangeAsync(List<T> entities) => _repository.AddRangeAsync(entities);
+
         public void DeleteAsync(T entity) => _repository.DeleteAsync(entity);
 
         public async Task<List<T>> GetAllAsync() => (await _repository.GetAllAsync()).ToList();

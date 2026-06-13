@@ -22,28 +22,28 @@ namespace Flashcards.Model
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Subject>()
-                .HasKey(s => s.id);
+                .HasKey(s => s.Id);
 
             modelBuilder.Entity<Chapter>()
-                .HasKey(c => c.id);
+                .HasKey(c => c.Id);
 
             modelBuilder.Entity<Chapter>()
                 .HasOne(c => c.Subject)
                 .WithMany(s => s.Chapters)
-                .HasForeignKey(c => c.subjectId);
+                .HasForeignKey(c => c.SubjectId);
 
             modelBuilder.Entity<Flashcard>()
-                .HasKey(f => f.id);
+                .HasKey(f => f.Id);
 
             modelBuilder.Entity<Flashcard>()
-                .HasOne(f => f.chapter)
+                .HasOne(f => f.Chapter)
                 .WithMany(c => c.Flashcards)
-                .HasForeignKey(f => f.chapterId);
+                .HasForeignKey(f => f.ChapterId);
 
             modelBuilder.Entity<Flashcard>()
-                .HasOne(f => f.subject)
+                .HasOne(f => f.Subject)
                 .WithMany(s => s.Flashcards)
-                .HasForeignKey(f => f.subjectId)
+                .HasForeignKey(f => f.SubjectId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

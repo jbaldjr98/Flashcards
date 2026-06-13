@@ -26,10 +26,13 @@ namespace Web.Pages
             {
                 return Page();
             }
-            await _subjectService.CreateNewSubject(NewSubject);
-            
+            var subject =await _subjectService.CreateNewSubject(NewSubject);
+            if(subject is not null)
+            {
+                return RedirectToPage("/CreateChapter", NewSubject);
+            }
+            ModelState.AddModelError("Name", "This Name is already taken");
             return Page();
-
 
         }
 

@@ -9,5 +9,6 @@ namespace DomainInterface
 {
     public interface IChapterService : IGenericService<Chapter> 
     {
+        public Task<Chapter> CreateNewChapter(Chapter NewChapter);
     }
 }

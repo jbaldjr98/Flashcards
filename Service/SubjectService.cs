@@ -17,14 +17,15 @@ namespace Domain
             _subjectRepository = subjectRepository;
         }
 
-        public async Task CreateNewSubject(Subject newSubject)
+        public async Task<Subject> CreateNewSubject(Subject newSubject)
         {
             var isUniqueName = await _subjectRepository.GetSubjectByName(newSubject.Name);
             if (isUniqueName == null)
             {
                 await _subjectRepository.AddAsync(newSubject);
-
+                return newSubject;
             }
+            return null;
         }
     }
 }

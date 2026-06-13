@@ -12,11 +12,21 @@ namespace Domain
     public class ChapterService : GenericService<Chapter>, IChapterService
     {
 
-        private readonly IChapterRepository _ChapterRepository;
+        private readonly IChapterRepository _chapterRepository;
 
         public ChapterService(IChapterRepository ChapterRepository) : base(ChapterRepository)
         {
-            _ChapterRepository = ChapterRepository;
+            _chapterRepository = ChapterRepository;
+        }
+
+        public async Task<Chapter> CreateNewChapter(Chapter NewChapter)
+        {
+            var chapter = await _chapterRepository.GetChapterByNameAsync(NewChapter.Name);
+            if (chapter == null)
+            {
+                chapter = await _chapterRepository.AddAsync(NewChapter);
+            }
+            return chapter;
         }
     }
 }

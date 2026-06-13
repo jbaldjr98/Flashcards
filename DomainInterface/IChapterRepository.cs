@@ -9,5 +9,7 @@ namespace DataInterface
 {
     public interface IChapterRepository : IGenericRepository<Chapter>
     {
+        public Task<Chapter> GetChapterByNameAsync(string name);
+
     }
 }

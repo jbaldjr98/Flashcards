@@ -1,17 +1,20 @@
-﻿namespace Flashcards.Model
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Flashcards.Model
 {
+    [Table("Flashcards")]
     public class Flashcard
     {
-        public int id { get; set; }
-        public int subjectId { get; set; }
-        public int chapterId { get; set; }
-        public string front { get; set; }
-        public string back { get; set; }
-        public double successRate {  get; set; }
-        public bool isRevisit {  get; set; }
+        public int Id { get; set; }
+        public int SubjectId { get; set; }
+        public int ChapterId { get; set; }
+        public string Front { get; set; }
+        public string Back { get; set; }
+        public double SuccessRate {  get; set; }
+        public bool IsRevisit {  get; set; }
 
-        public Subject subject {  get; set; }
-        public Chapter chapter { get; set; }
+        public Subject Subject {  get; set; }
+        public Chapter Chapter { get; set; }
 
     }
 }
