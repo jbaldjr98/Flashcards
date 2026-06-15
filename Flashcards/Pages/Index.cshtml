@@ -40,8 +40,11 @@
                             <td class="ix-td ix-desc">@(subject.Description ?? "—")</td>
                             <td class="ix-td ix-actions">
                                 <a href="#" class="ix-btn ix-btn-study" title="Study">Study</a>
-                                <a href="#" class="ix-btn ix-btn-update" title="Update">Update</a>
-                                <button class="ix-btn ix-btn-delete" title="Delete">Delete</button>
+                                <a href="/UpdateDeck?subjectId=@subject.Id" class="ix-btn ix-btn-update" title="Update">Update</a>
+                                <button class="ix-btn ix-btn-delete"
+                                        data-subject-id="@subject.Id"
+                                        data-subject-name="@subject.Name"
+                                        onclick="confirmDelete(this)">Delete</button>
                             </td>
                         </tr>
                     }
@@ -50,6 +53,22 @@
         </div>
     }
 
+</div>
+
+<!-- Delete confirmation modal -->
+<div class="ix-modal-backdrop" id="deleteModal" onclick="closeModal(event)">
+    <div class="ix-modal">
+        <h2 class="ix-modal-title">Delete Subject</h2>
+        <p class="ix-modal-body">Are you sure you want to delete <strong id="deleteSubjectName"></strong>? All chapters and flashcards within this subject will also be permanently deleted. This cannot be undone.</p>
+        <form method="post" asp-page-handler="DeleteSubject">
+            <input type="hidden" name="subjectId" id="deleteSubjectId" />
+            @Html.AntiForgeryToken()
+            <div class="ix-modal-actions">
+                <button type="button" class="ix-modal-cancel" onclick="closeDeleteModal()">Cancel</button>
+                <button type="submit" class="ix-modal-confirm">Yes, Delete</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <style>
@@ -173,4 +192,80 @@
     }
 
     .ix-btn-delete:hover { background: #450a0a; color: #fca5a5; border-color: #ef4444; }
+
+    /* ── Modal ── */
+    .ix-modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.6);
+        backdrop-filter: blur(3px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ix-modal-backdrop.open { display: flex; }
+
+    .ix-modal {
+        background: #1f2937;
+        border: 1.5px solid #374151;
+        border-radius: 12px;
+        padding: 2rem;
+        max-width: 420px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    }
+
+    .ix-modal-title { font-size: 1.2rem; font-weight: 700; color: #f3f4f6; margin: 0 0 .75rem; }
+    .ix-modal-body  { color: #9ca3af; font-size: .95rem; margin: 0 0 1.75rem; line-height: 1.55; }
+    .ix-modal-body strong { color: #f3f4f6; }
+
+    .ix-modal-actions { display: flex; justify-content: flex-end; gap: .75rem; }
+
+    .ix-modal-cancel {
+        padding: .5rem 1.2rem;
+        border-radius: 7px;
+        border: 1.5px solid #374151;
+        background: none;
+        color: #9ca3af;
+        font-size: .9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .15s, color .15s;
+    }
+
+    .ix-modal-cancel:hover { background: #111827; color: #e5e7eb; }
+
+    .ix-modal-confirm {
+        padding: .5rem 1.2rem;
+        border-radius: 7px;
+        border: none;
+        background: #dc2626;
+        color: #fff;
+        font-size: .9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .15s, box-shadow .15s;
+    }
+
+    .ix-modal-confirm:hover { background: #b91c1c; box-shadow: 0 4px 12px rgba(220,38,38,.4); }
 </style>
+
+@section Scripts {
+    <script>
+        function confirmDelete(btn) {
+            document.getElementById('deleteSubjectName').textContent = btn.dataset.subjectName;
+            document.getElementById('deleteSubjectId').value = btn.dataset.subjectId;
+            document.getElementById('deleteModal').classList.add('open');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('open');
+        }
+
+        function closeModal(e) {
+            if (e.target === document.getElementById('deleteModal')) closeDeleteModal();
+        }
+    </script>
+}

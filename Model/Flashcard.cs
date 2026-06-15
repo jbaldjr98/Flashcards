@@ -11,7 +11,8 @@ namespace Flashcards.Model
         public int ChapterId { get; set; }
         public string Front { get; set; }
         public string Back { get; set; }
-        public double SuccessRate {  get; set; }
+        public int numSuccess {  get; set; }
+        public int numFailure { get; set; }
         public bool IsRevisit {  get; set; }
         [ValidateNever]
         public Subject Subject {  get; set; }

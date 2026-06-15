@@ -44,7 +44,7 @@ namespace Flashcards.Model
                 .HasOne(f => f.Subject)
                 .WithMany(s => s.Flashcards)
                 .HasForeignKey(f => f.SubjectId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

@@ -20,5 +20,13 @@ namespace Flashcards.Pages
         {
             Subjects = await _subjectService.GetAllAsync();
         }
+
+        public async Task<IActionResult> OnPostDeleteSubjectAsync(int subjectId)
+        {
+            var subject = await _subjectService.GetByIdAsync(subjectId);
+            if (subject is not null)
+                _subjectService.DeleteAsync(subject);
+            return RedirectToPage();
+        }
     }
 }
