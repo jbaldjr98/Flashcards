@@ -17,5 +17,10 @@ namespace Domain
         {
             _flashcardRepository = flashcardRepository;
         }
+
+        public async Task CreateFlashcards(List<Flashcard> newFlashcards)
+        {
+            await _flashcardRepository.AddRangeAsync(newFlashcards);
+        }
     }
 }

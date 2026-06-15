@@ -1,3 +1,5 @@
+using DomainInterface;
+using Flashcards.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -5,16 +7,18 @@ namespace Flashcards.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
+        private readonly ISubjectService _subjectService;
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(ISubjectService subjectService)
         {
-            _logger = logger;
+            _subjectService = subjectService;
         }
 
-        public void OnGet()
-        {
+        public List<Subject> Subjects { get; set; } = new();
 
+        public async Task OnGetAsync()
+        {
+            Subjects = await _subjectService.GetAllAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Flashcards.Model
 {
@@ -12,8 +13,9 @@ namespace Flashcards.Model
         public string Back { get; set; }
         public double SuccessRate {  get; set; }
         public bool IsRevisit {  get; set; }
-
+        [ValidateNever]
         public Subject Subject {  get; set; }
+        [ValidateNever]
         public Chapter Chapter { get; set; }
 
     }

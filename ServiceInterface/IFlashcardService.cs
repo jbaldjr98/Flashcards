@@ -9,5 +9,6 @@ namespace DomainInterface
 {
     public interface IFlashcardService : IGenericService<Flashcard>
     {
+        public Task CreateFlashcards(List<Flashcard> newFlashcards);
     }
 }

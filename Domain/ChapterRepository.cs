@@ -22,5 +22,11 @@ namespace Data
             var chapter = await _dbContext.Chapters.FirstOrDefaultAsync(c => c.Name == name);
             return chapter;
         }
+
+        public IQueryable<Chapter> GetChaptersBySubject(int subjectId)
+        {
+            var chapters = _dbContext.Chapters.Where(c => c.SubjectId == subjectId);
+            return chapters;
+        }
     }
 }

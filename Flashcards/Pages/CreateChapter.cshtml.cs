@@ -40,7 +40,7 @@ namespace Web.Pages
                 return Page();
             }
 
-            return Page();
+            return RedirectToPage("/createFlashcards");
 
 
         }

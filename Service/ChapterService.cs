@@ -28,5 +28,7 @@ namespace Domain
             }
             return chapter;
         }
+
+        public List<Chapter> GetChaptersBySubjectId(int SubjectId) => _chapterRepository.GetChaptersBySubject(SubjectId).ToList();
     }
 }
