@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
   <Operation Name="Rename Refactor" Key="d478ce46-f877-444a-bfc9-4a3b1d552c07" ChangeDateTime="06/15/2026 22:22:36">
-    <Property Name="ElementName" Value="[dbo].[Flashcard].[successRate]" />
+    <Property Name="ElementName" Value="[dbo].[Flashcards].[successRate]" />
     <Property Name="ElementType" Value="SqlSimpleColumn" />
-    <Property Name="ParentElementName" Value="[dbo].[Flashcard]" />
+    <Property Name="ParentElementName" Value="[dbo].[Flashcards]" />
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="numSuccess" />
   </Operation>

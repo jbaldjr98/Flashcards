@@ -1,13 +1,13 @@
-﻿CREATE TABLE [dbo].[Flashcard]
+CREATE TABLE [dbo].[Flashcards]
 (
-	[Id] INT NOT NULL PRIMARY KEY, 
-    [subjectId] INT NULL, 
-    [chapterId] INT NULL, 
-    [front] NVARCHAR(50) NULL, 
-    [back] NVARCHAR(50) NULL, 
-    [numSuccess] INT NULL, 
-    [isRevisit] BIT NULL, 
-    [numFailure] INT NULL, 
-    CONSTRAINT [FK_Flashcard_ToChapter] FOREIGN KEY ([chapterId]) REFERENCES [Chapter]([Id]), 
-    CONSTRAINT [FK_Flashcard_ToSubject] FOREIGN KEY ([subjectId]) REFERENCES [Subject]([Id])
+    [Id]          INT            NOT NULL IDENTITY(1,1) PRIMARY KEY,
+    [SubjectId]   INT            NOT NULL,
+    [ChapterId]   INT            NOT NULL,
+    [Front]       NVARCHAR(MAX)  NOT NULL,
+    [Back]        NVARCHAR(MAX)  NOT NULL,
+    [numSuccess]  INT            NOT NULL DEFAULT 0,
+    [numFailure]  INT            NOT NULL DEFAULT 0,
+    [IsRevisit]   BIT            NOT NULL DEFAULT 0,
+    CONSTRAINT [FK_Flashcards_Chapters] FOREIGN KEY ([ChapterId]) REFERENCES [Chapters]([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_Flashcards_Subjects] FOREIGN KEY ([SubjectId]) REFERENCES [Subjects]([Id])
 )

@@ -1,8 +1,8 @@
-﻿CREATE TABLE [dbo].[Chapter]
+CREATE TABLE [dbo].[Chapters]
 (
-	[Id] INT NOT NULL PRIMARY KEY, 
-    [Name] NVARCHAR(50) NULL, 
-    [Description] NVARCHAR(50) NULL, 
-    [SubjectId] INT NULL, 
-    CONSTRAINT [FK_Chapter_ToSubject] FOREIGN KEY (SubjectId) REFERENCES [Subject]([Id])
+    [Id]          INT            NOT NULL IDENTITY(1,1) PRIMARY KEY,
+    [Name]        NVARCHAR(100)  NOT NULL,
+    [Description] NVARCHAR(MAX)  NOT NULL,
+    [SubjectId]   INT            NOT NULL,
+    CONSTRAINT [FK_Chapters_Subjects] FOREIGN KEY ([SubjectId]) REFERENCES [Subjects]([Id]) ON DELETE CASCADE
 )

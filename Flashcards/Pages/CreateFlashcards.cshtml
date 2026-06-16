@@ -183,7 +183,10 @@
         overflow: hidden;
     }
 
-    .fc-table { width: 100%; border-collapse: collapse; }
+    .fc-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .fc-th-num,    .fc-row td:first-child { width: 2.5rem; }
+    .fc-th-action, .fc-row td:last-child  { width: 3rem; }
+    .fc-row td:nth-child(2), .fc-row td:nth-child(3) { width: calc((100% - 5.5rem) / 2); }
 
     .fc-th {
         padding: .65rem 1rem;
@@ -214,6 +217,7 @@
 
     .fc-input {
         width: 100%;
+        box-sizing: border-box;
         border: none;
         background: transparent;
         padding: .65rem .75rem;
