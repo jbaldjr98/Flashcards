@@ -39,7 +39,7 @@
                             <td class="ix-td ix-name">@subject.Name</td>
                             <td class="ix-td ix-desc">@(subject.Description ?? "—")</td>
                             <td class="ix-td ix-actions">
-                                <a href="#" class="ix-btn ix-btn-study" title="Study">Study</a>
+                                <a href="/Study?subjectId=@subject.Id" class="ix-btn ix-btn-study" title="Study">Study</a>
                                 <a href="/UpdateDeck?subjectId=@subject.Id" class="ix-btn ix-btn-update" title="Update">Update</a>
                                 <button class="ix-btn ix-btn-delete"
                                         data-subject-id="@subject.Id"

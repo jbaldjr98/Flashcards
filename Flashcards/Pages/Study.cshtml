@@ -1,0 +1,501 @@
+@page
+@model Web.Pages.StudyModel
+@{
+    ViewData["Title"] = "Study";
+}
+
+<div class="st-page">
+    <div class="st-header">
+        <h1 class="st-title">Study</h1>
+        <p class="st-subtitle">Pick a subject and chapter, then work through your cards.</p>
+    </div>
+
+    <!-- Selector -->
+    <div class="st-selector">
+        <div class="st-selector-row">
+            <div class="st-field">
+                <label class="st-label" for="subjectSelect">Subject</label>
+                <select id="subjectSelect" class="st-select">
+                    <option value="">Select a subject…</option>
+                    @foreach (var subject in Model.Subjects)
+                    {
+                        <option value="@subject.Id" selected="@(Model.SubjectId == subject.Id ? "selected" : null)">@subject.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="st-field">
+                <label class="st-label" for="chapterSelect">Chapter</label>
+                <select id="chapterSelect" class="st-select" disabled>
+                    <option value="0">All Chapters</option>
+                </select>
+            </div>
+            <button id="startBtn" class="st-start-btn" disabled>Start Studying</button>
+        </div>
+    </div>
+
+    @if (Model.Deck.Count > 0)
+    {
+        <!-- Study Area -->
+        <div id="studyArea">
+            <!-- Progress -->
+            <div class="st-progress-row">
+                <span id="progressText" class="st-progress-text"></span>
+                <div class="st-progress-bar-wrap">
+                    <div id="progressBar" class="st-progress-bar"></div>
+                </div>
+            </div>
+
+            <!-- Flip Card -->
+            <div class="st-scene" id="cardScene">
+                <div class="st-card" id="flashCard">
+                    <div class="st-card-face st-card-front">
+                        <span class="st-face-label">Front</span>
+                        <p class="st-card-text" id="cardFront"></p>
+                        <span class="st-flip-hint">Click to reveal answer</span>
+                    </div>
+                    <div class="st-card-face st-card-back">
+                        <span class="st-face-label">Back</span>
+                        <p class="st-card-text" id="cardBack"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions (shown after flip) -->
+            <div class="st-actions" id="cardActions">
+                <label class="st-revisit-label">
+                    <input type="checkbox" id="revisitCheck" class="st-revisit-check">
+                    <span>Mark for revisit</span>
+                </label>
+                <div class="st-verdict-btns">
+                    <button class="st-btn st-btn-failure" id="failureBtn">✗ Incorrect</button>
+                    <button class="st-btn st-btn-success" id="successBtn">✓ Correct</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- End Screen -->
+        <div id="endScreen" class="st-end" style="display:none">
+            <div class="st-end-icon">🎉</div>
+            <h2 class="st-end-title">Deck Complete!</h2>
+            <div class="st-end-stats">
+                <div class="st-stat st-stat-success">
+                    <span class="st-stat-num" id="statCorrect">0</span>
+                    <span class="st-stat-lbl">Correct</span>
+                </div>
+                <div class="st-stat st-stat-failure">
+                    <span class="st-stat-num" id="statIncorrect">0</span>
+                    <span class="st-stat-lbl">Incorrect</span>
+                </div>
+            </div>
+            <div class="st-end-actions">
+                <a href="/Study?subjectId=@Model.SubjectId&chapterId=@Model.ChapterId" class="st-btn st-btn-secondary">Study Again</a>
+                <a href="/" class="st-btn st-btn-primary">Back to Home</a>
+            </div>
+        </div>
+    }
+    else if (Model.SubjectId > 0)
+    {
+        <div class="st-empty">No flashcards found for the selected subject/chapter.</div>
+    }
+</div>
+
+<style>
+    .st-page {
+        max-width: 700px;
+        margin: 3rem auto;
+        padding: 0 1.5rem 4rem;
+    }
+
+    .st-header { margin-bottom: 2rem; }
+    .st-title  { font-size: 1.75rem; font-weight: 700; color: #f3f4f6; margin: 0 0 .35rem; }
+    .st-subtitle { color: #9ca3af; margin: 0; font-size: .95rem; }
+
+    /* Selector */
+    .st-selector { margin-bottom: 2.5rem; }
+    .st-selector-row {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .st-field { display: flex; flex-direction: column; gap: .4rem; flex: 1; min-width: 160px; }
+    .st-label { font-size: .75rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #9ca3af; }
+
+    .st-select {
+        height: 42px;
+        padding: 0 .75rem;
+        border: 1.5px solid #374151;
+        border-radius: 8px;
+        background: #1f2937;
+        color: #f3f4f6;
+        font-size: .95rem;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239ca3af' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right .75rem center;
+        padding-right: 2.25rem;
+        cursor: pointer;
+        transition: border-color .15s;
+    }
+    .st-select:focus { outline: none; border-color: #818cf8; box-shadow: 0 0 0 3px rgba(129,140,248,.2); }
+    .st-select:disabled { background-color: #111827; color: #6b7280; cursor: not-allowed; }
+    .st-select option { background: #1f2937; }
+
+    .st-start-btn {
+        height: 42px;
+        padding: 0 1.5rem;
+        background: #6366f1;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: .95rem;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background .15s;
+        align-self: flex-end;
+    }
+    .st-start-btn:hover:not(:disabled) { background: #4f46e5; }
+    .st-start-btn:disabled { background: #374151; color: #6b7280; cursor: not-allowed; }
+
+    /* Progress */
+    .st-progress-row { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1.5rem; }
+    .st-progress-text { font-size: .8rem; color: #9ca3af; }
+    .st-progress-bar-wrap { height: 4px; background: #1f2937; border-radius: 9999px; overflow: hidden; }
+    .st-progress-bar { height: 100%; background: #6366f1; border-radius: 9999px; transition: width .3s ease; }
+
+    /* Flip card */
+    .st-scene {
+        perspective: 1000px;
+        margin-bottom: 1.5rem;
+        cursor: pointer;
+    }
+
+    .st-card {
+        width: 100%;
+        min-height: 220px;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform .5s ease;
+        border-radius: 14px;
+    }
+
+    .st-card.flipped { transform: rotateY(180deg); }
+
+    .st-card-face {
+        position: absolute;
+        width: 100%;
+        min-height: 220px;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        border-radius: 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        box-sizing: border-box;
+        gap: .75rem;
+    }
+
+    .st-card-front {
+        background: #1f2937;
+        border: 1.5px solid #374151;
+    }
+
+    .st-card-back {
+        background: #1e1b4b;
+        border: 1.5px solid #4f46e5;
+        transform: rotateY(180deg);
+    }
+
+    .st-face-label {
+        font-size: .7rem;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: #6b7280;
+    }
+
+    .st-card-back .st-face-label { color: #818cf8; }
+
+    .st-card-text {
+        font-size: 1.3rem;
+        font-weight: 500;
+        color: #f3f4f6;
+        text-align: center;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .st-flip-hint {
+        font-size: .78rem;
+        color: #4b5563;
+        margin-top: .5rem;
+    }
+
+    /* Actions */
+    .st-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .25s;
+    }
+
+    .st-actions.visible { opacity: 1; pointer-events: all; }
+
+    .st-revisit-label {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        font-size: .9rem;
+        color: #9ca3af;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .st-revisit-check {
+        width: 16px;
+        height: 16px;
+        accent-color: #f59e0b;
+        cursor: pointer;
+    }
+
+    .st-verdict-btns { display: flex; gap: .75rem; }
+
+    .st-btn {
+        padding: .55rem 1.4rem;
+        border: none;
+        border-radius: 8px;
+        font-size: .9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .15s, box-shadow .15s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .st-btn-success  { background: #065f46; color: #6ee7b7; }
+    .st-btn-success:hover  { background: #047857; }
+    .st-btn-failure  { background: #450a0a; color: #fca5a5; }
+    .st-btn-failure:hover  { background: #7f1d1d; }
+    .st-btn-primary  { background: #6366f1; color: #fff; }
+    .st-btn-primary:hover  { background: #4f46e5; }
+    .st-btn-secondary { background: #1f2937; color: #d1d5db; border: 1.5px solid #374151; }
+    .st-btn-secondary:hover { background: #374151; }
+
+    /* End screen */
+    .st-end {
+        text-align: center;
+        padding: 3rem 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.25rem;
+    }
+
+    .st-end-icon { font-size: 3rem; }
+    .st-end-title { font-size: 1.5rem; font-weight: 700; color: #f3f4f6; margin: 0; }
+
+    .st-end-stats {
+        display: flex;
+        gap: 2rem;
+        margin: .5rem 0;
+    }
+
+    .st-stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: .2rem;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        min-width: 90px;
+    }
+
+    .st-stat-success { background: #064e3b; }
+    .st-stat-failure { background: #450a0a; }
+
+    .st-stat-num { font-size: 2rem; font-weight: 700; color: #f3f4f6; }
+    .st-stat-lbl { font-size: .8rem; color: #9ca3af; text-transform: uppercase; letter-spacing: .05em; }
+
+    .st-end-actions { display: flex; gap: 1rem; margin-top: .5rem; }
+
+    .st-empty {
+        text-align: center;
+        padding: 3rem;
+        color: #6b7280;
+        font-size: .95rem;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // ── Dropdown wiring ──────────────────────────────────────────────
+        const subjectSelect = document.getElementById('subjectSelect');
+        const chapterSelect = document.getElementById('chapterSelect');
+        const startBtn      = document.getElementById('startBtn');
+
+        function updateStartBtn() {
+            startBtn.disabled = !subjectSelect.value;
+        }
+
+        subjectSelect.addEventListener('change', async function () {
+            chapterSelect.innerHTML = '<option value="0">All Chapters</option>';
+            chapterSelect.disabled = true;
+            updateStartBtn();
+            if (!this.value) return;
+
+            const resp = await fetch(`?handler=ChaptersBySubject&subjectId=${this.value}`);
+            const chapters = await resp.json();
+            chapters.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = c.name;
+                chapterSelect.appendChild(opt);
+            });
+            chapterSelect.disabled = false;
+        });
+
+        subjectSelect.addEventListener('change', updateStartBtn);
+
+        startBtn.addEventListener('click', function () {
+            const s = subjectSelect.value;
+            const c = chapterSelect.value || '0';
+            window.location.href = `/Study?subjectId=${s}&chapterId=${c}`;
+        });
+
+        // Restore chapter dropdown selection if we came back with a chapterId
+        (async function restoreChapter() {
+            const preSubject = @Model.SubjectId;
+            const preChapter = @Model.ChapterId;
+            if (!preSubject) { updateStartBtn(); return; }
+
+            const resp = await fetch(`?handler=ChaptersBySubject&subjectId=${preSubject}`);
+            const chapters = await resp.json();
+            chapters.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = c.name;
+                if (c.id === preChapter) opt.selected = true;
+                chapterSelect.appendChild(opt);
+            });
+            chapterSelect.disabled = false;
+            updateStartBtn();
+        })();
+
+        @if (Model.Deck.Count > 0)
+        {
+            <text>
+        // ── Study logic ──────────────────────────────────────────────────
+        const deck    = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            Model.Deck.Select(f => new { f.Id, f.Front, f.Back, f.IsRevisit })));
+        const token   = document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
+
+        let idx       = 0;
+        let correct   = 0;
+        let incorrect = 0;
+        let isRevisit = false;
+
+        const cardEl      = document.getElementById('flashCard');
+        const cardFront   = document.getElementById('cardFront');
+        const cardBack    = document.getElementById('cardBack');
+        const cardActions = document.getElementById('cardActions');
+        const revisitChk  = document.getElementById('revisitCheck');
+        const progressTxt = document.getElementById('progressText');
+        const progressBar = document.getElementById('progressBar');
+
+        function showCard(i) {
+            const card = deck[i];
+            cardFront.textContent  = card.Front;
+            cardBack.textContent   = card.Back;
+            revisitChk.checked     = card.IsRevisit;
+            isRevisit              = card.IsRevisit;
+            cardEl.classList.remove('flipped');
+            cardActions.classList.remove('visible');
+            updateProgress(i);
+        }
+
+        function updateProgress(i) {
+            const total = deck.length;
+            progressTxt.textContent = `Card ${i + 1} of ${total}`;
+            progressBar.style.width = `${((i) / total) * 100}%`;
+        }
+
+        document.getElementById('cardScene').addEventListener('click', function () {
+            if (!cardEl.classList.contains('flipped')) {
+                cardEl.classList.add('flipped');
+                cardActions.classList.add('visible');
+            }
+        });
+
+        revisitChk.addEventListener('change', function () {
+            isRevisit = this.checked;
+            postMark(deck[idx].Id, null, isRevisit);
+        });
+
+        document.getElementById('successBtn').addEventListener('click', function () {
+            correct++;
+            postMark(deck[idx].Id, 'success', isRevisit);
+            unflipThen(nextCard);
+        });
+
+        document.getElementById('failureBtn').addEventListener('click', function () {
+            incorrect++;
+            postMark(deck[idx].Id, 'failure', isRevisit);
+            unflipThen(nextCard);
+        });
+
+        function unflipThen(callback) {
+            cardEl.classList.remove('flipped');
+            cardActions.classList.remove('visible');
+            cardEl.addEventListener('transitionend', function handler() {
+                cardEl.removeEventListener('transitionend', handler);
+                callback();
+            });
+        }
+
+        function nextCard() {
+            idx++;
+            if (idx >= deck.length) {
+                showEndScreen();
+            } else {
+                showCard(idx);
+            }
+        }
+
+        function showEndScreen() {
+            document.getElementById('studyArea').style.display = 'none';
+            document.getElementById('endScreen').style.display = 'flex';
+            document.getElementById('statCorrect').textContent   = correct;
+            document.getElementById('statIncorrect').textContent = incorrect;
+            progressBar.style.width = '100%';
+        }
+
+        async function postMark(id, result, revisit, callback) {
+            try {
+                await fetch('?handler=Mark', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({ id, result, isRevisit: revisit })
+                });
+            } catch (_) {}
+            if (callback) callback();
+        }
+
+        // Init
+        showCard(0);
+            </text>
+        }
+    </script>
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
