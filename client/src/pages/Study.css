@@ -1,0 +1,103 @@
+.st-selector {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.st-progress-row { margin-bottom: 1.5rem; }
+
+.st-scene {
+  perspective: 1000px;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+}
+
+.st-card {
+  width: 100%;
+  min-height: 220px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform .5s ease;
+  border-radius: 14px;
+}
+
+.st-card.flipped { transform: rotateY(180deg); }
+
+.st-face {
+  position: absolute;
+  width: 100%;
+  min-height: 220px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-sizing: border-box;
+  gap: .75rem;
+}
+
+.st-front { background: #1f2937; border: 1.5px solid #374151; }
+.st-back  { background: #1e1b4b; border: 1.5px solid #4f46e5; transform: rotateY(180deg); }
+
+.st-face-label {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.st-card-text {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #f3f4f6;
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.st-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s;
+}
+
+.st-actions.visible { opacity: 1; pointer-events: all; }
+
+.st-verdict {
+  padding: .55rem 1.4rem;
+  border: none;
+  border-radius: 8px;
+  font-size: .9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.st-verdict.success { background: #065f46; color: #6ee7b7; }
+.st-verdict.success:hover { background: #047857; }
+.st-verdict.failure { background: #450a0a; color: #fca5a5; }
+.st-verdict.failure:hover { background: #7f1d1d; }
+
+.st-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .2rem;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  min-width: 90px;
+}
+
+.success-stat { background: #064e3b; }
+.failure-stat { background: #450a0a; }

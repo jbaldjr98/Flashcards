@@ -1,50 +1,76 @@
 # Flashcards
 
-A web-based flashcard study app built with ASP.NET Core Razor Pages and SQL Server. Users create subjects and chapters to organise their flashcards, then study them with a flip-card interface that tracks correct/incorrect answers.
+A flashcard study app built with a **React** frontend and an **ASP.NET Core Web API** backend backed by SQL Server. Users create subjects and chapters to organise their flashcards, then study them with a flip-card interface that tracks correct/incorrect answers per card.
 
 ---
 
 ## Features
 
 - Create **subjects**, **chapters**, and **flashcards**
-- Edit existing flashcard decks — update front/back text, change chapters, add or delete cards
+- Edit existing decks — update front/back text, change chapters, add or delete cards inline
 - **Study mode** — flip cards, mark correct/incorrect, flag cards for revisit, see a results summary at the end
-- Delete subjects (cascades to chapters and flashcards)
+- Delete subjects (cascades to all chapters and flashcards)
 
 ---
 
 ## Architecture
 
-The solution follows a layered architecture split across six projects:
+The solution is split into two top-level parts: a React SPA (`client/`) and a .NET backend (`Flashcards/` + supporting projects).
 
 ```
-Flashcards/          → ASP.NET Core Razor Pages web app (UI + page models)
-Model/               → Domain entities + EF Core DbContext
-ServiceInterface/    → Service interfaces (IGenericService, ISubjectService, etc.)
-Service/             → Service implementations
-DomainInterface/     → Repository interfaces (IGenericRepository, etc.)
-Domain/              → Repository implementations (EF Core)
+client/                  → React frontend (Vite)
+Flashcards/              → ASP.NET Core Web API
+Model/                   → Domain entities + EF Core DbContext
+ServiceInterface/        → Service interfaces
+Service/                 → Service implementations
+DomainInterface/         → Repository interfaces
+Domain/                  → Repository implementations (EF Core)
 ```
 
-### Layer responsibilities
+### Backend layer responsibilities
 
 | Layer | Project | Responsibility |
 |---|---|---|
-| Presentation | `Flashcards` | Razor Pages, page models, HTML/CSS/JS |
+| API | `Flashcards` | REST controllers, CORS, DI wiring |
 | Application | `Service` / `ServiceInterface` | Business logic, orchestration |
 | Data access | `Domain` / `DomainInterface` | EF Core repositories |
 | Domain model | `Model` | Entities, `ApplicationDbContext` |
 
-### Dependency flow
+### Frontend structure
 
 ```
-Flashcards (Web)
-    └── ServiceInterface (ISubjectService, IChapterService, IFlashcardService)
-            └── DomainInterface (IGenericRepository, IChapterRepository, etc.)
-                    └── Model (Subject, Chapter, Flashcard, ApplicationDbContext)
+client/src/
+  api/          → Fetch wrappers (subjects.js, chapters.js, flashcards.js)
+  components/   → Shared components (Navbar, Modal)
+  pages/        → One file per route
+  App.jsx       → Router setup
+  index.css     → Global dark-theme styles
 ```
 
-Concrete implementations (`Service`, `Domain`) are registered in `Program.cs` via dependency injection and are never referenced directly by the web layer.
+### Request flow
+
+```
+React (localhost:5173)
+  └── Vite proxy /api/* → .NET API (localhost:51234)
+        └── Controller → Service → Repository → SQL Server
+```
+
+---
+
+## API Endpoints
+
+| Method | Route | Description |
+|---|---|---|
+| GET | `/api/subjects` | Get all subjects |
+| POST | `/api/subjects` | Create a subject |
+| DELETE | `/api/subjects/{id}` | Delete a subject (cascades) |
+| GET | `/api/chapters?subjectId=X` | Get chapters for a subject |
+| POST | `/api/chapters` | Create a chapter |
+| GET | `/api/flashcards?subjectId=X` | Get flashcards for a subject |
+| POST | `/api/flashcards/batch` | Create multiple flashcards |
+| PUT | `/api/flashcards/{id}` | Update a flashcard |
+| DELETE | `/api/flashcards/{id}` | Delete a flashcard |
+| PATCH | `/api/flashcards/{id}/mark` | Record correct/incorrect/revisit |
 
 ---
 
@@ -53,83 +79,86 @@ Concrete implementations (`Service`, `Domain`) are registered in `Program.cs` vi
 ```
 Subject
  ├── Id, Name, Description
- ├── Chapters  (one-to-many)
- └── Flashcards (one-to-many)
+ ├── Chapters  (one-to-many → cascade delete)
+ └── Flashcards (one-to-many → NoAction)
 
 Chapter
  ├── Id, Name, Description, SubjectId
- └── Flashcards (one-to-many)
+ └── Flashcards (one-to-many → cascade delete)
 
 Flashcard
  ├── Id, Front, Back
  ├── SubjectId, ChapterId
- ├── SuccessRate, numSuccess, numFailure
+ ├── numSuccess, numFailure
  └── IsRevisit
 ```
 
-**Cascade behaviour:** deleting a Subject cascades to its Chapters, which in turn cascades to their Flashcards. The direct Subject → Flashcard foreign key is set to `NoAction` to avoid a multiple-cascade-path conflict in SQL Server.
+**Cascade behaviour:** deleting a Subject cascades to its Chapters, which cascades to their Flashcards. The direct Subject → Flashcard FK is `NoAction` to avoid a multiple-cascade-path conflict in SQL Server — flashcards are cleaned up via the Chapter path.
 
 ---
 
 ## Pages
 
-| Page | Route | Description |
+| Route | Component | Description |
 |---|---|---|
-| Index | `/` | Lists all subjects with Study / Update / Delete actions |
-| Create Subject | `/CreateSubject` | Form to create a new subject |
-| Create Chapter | `/CreateChapter` | Form to create a chapter under a subject |
-| Create Flashcards | `/CreateFlashcards` | Select subject + chapter, add multiple flashcards in a table |
-| Update Deck | `/UpdateDeck?subjectId=X` | Edit existing flashcards, add new ones, add chapters |
-| Study | `/Study` | Flip-card study session with progress tracking |
-
----
-
-## Key Patterns
-
-### Generic repository + service
-`GenericRepository<T>` and `GenericService<T>` provide `GetAllAsync`, `GetByIdAsync`, `AddAsync`, `AddRangeAsync`, `UpdateAsync`, and `DeleteAsync` for any entity. Entity-specific services (e.g. `ChapterService`) extend these with custom queries like `GetChaptersBySubjectId`.
-
-### Razor Pages handlers
-Each page uses named handlers for distinct operations:
-
-- `OnGetAsync` — load page data
-- `OnPostAsync` — primary form submit
-- `OnPostDeleteSubjectAsync`, `OnPostDeleteFlashcardAsync` — targeted deletes
-- `OnPostAddChapterAsync` — modal form submit
-- `OnGetChaptersBySubject` — AJAX endpoint returning JSON for dynamic dropdowns
-
-### Model binding
-`[BindProperty]` is used on page model properties. Navigation properties (`Subject`, `Chapter`) are decorated with `[ValidateNever]` to prevent model validation from failing when those objects are not present in a form POST.
-
----
-
-## Tech Stack
-
-- **ASP.NET Core 9** — Razor Pages
-- **Entity Framework Core** — SQL Server provider, code-first
-- **Bootstrap 5** — layout utilities (navbar, grid)
-- **Custom CSS** — dark-mode UI with a consistent indigo (`#6366f1`) accent colour
+| `/` | `Index` | Subjects table with Study / Update / Delete per row |
+| `/create-subject` | `CreateSubject` | Form to create a subject |
+| `/create-chapter` | `CreateChapter` | Form to create a chapter (accepts `?subjectId=X`) |
+| `/create-flashcards` | `CreateFlashcards` | Subject + chapter picker, dynamic card table |
+| `/update-deck/:subjectId` | `UpdateDeck` | Edit/add/delete cards, add chapters via modal |
+| `/study` | `Study` | Flip-card study session with progress + results |
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
+
 - .NET 9 SDK
-- SQL Server (local or remote)
+- SQL Server
+- Node.js 18+ / npm
 
-### Setup
+### 1. Configure the database
 
-1. Clone the repository.
-2. Set the connection string in `Flashcards/appsettings.json`:
-   ```json
-   "ConnectionStrings": {
-     "DefaultConnection": "Server=...;Database=Flashcards;..."
-   }
-   ```
-3. The app calls `db.Database.Migrate()` on startup, so the schema is created automatically on first run. If you are using EF migrations via the Package Manager Console:
-   ```
-   Add-Migration InitialCreate -StartupProject Flashcards
-   Update-Database -StartupProject Flashcards
-   ```
-4. Run the `Flashcards` project.
+Set the connection string in `Flashcards/appsettings.json`:
+
+```json
+"ConnectionStrings": {
+  "DefaultConnection": "Server=...;Database=Flashcards;Trusted_Connection=True;"
+}
+```
+
+The app calls `db.Database.Migrate()` on startup so the schema is applied automatically.
+
+### 2. Start the .NET API
+
+Open the solution in Visual Studio and press **F5**, or:
+
+```
+dotnet run --project Flashcards
+```
+
+The API runs on `http://localhost:51234`.
+
+### 3. Start the React app
+
+```
+cd client
+npm install   # first time only
+npm run dev
+```
+
+Open **http://localhost:5173** in your browser.
+
+The Vite dev server proxies all `/api/*` requests to the .NET API automatically, so no CORS configuration is needed in the browser.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, React Router 6, Vite |
+| Backend | ASP.NET Core 9 Web API |
+| ORM | Entity Framework Core 9 (SQL Server) |
+| Styling | Custom CSS, dark theme (`#111827` base, `#6366f1` accent) |

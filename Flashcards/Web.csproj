@@ -28,4 +28,8 @@
     <ProjectReference Include="..\Service\Domain.csproj" />
   </ItemGroup>
 
+	<Target Name="NpmRunDev" BeforeTargets="Build">
+		<Exec Command="npm run dev" WorkingDirectory="..\client" />
+	</Target>
+
 </Project>
